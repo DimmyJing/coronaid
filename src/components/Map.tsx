@@ -3,7 +3,7 @@ import ReactMapGL, { WebMercatorViewport } from 'react-map-gl';
 import styled from 'styled-components';
 
 import GetLocations from 'core/GetLocations';
-import MapOverlay from './MapOverlay';
+// import MapOverlay from './MapOverlay';
 import Markers from './MapMarkers';
 
 
@@ -11,16 +11,17 @@ const Container = styled.div`
 position: absolute;
 `;
 
-export default function() {
+export default function(props: {extraInfoHandler: (extraInfo: any) => void, currentTerm: string}) {
+    const { extraInfoHandler, currentTerm } = props;
     let [viewport, setViewport] = useState({
-        latitude: 32.8149783969858,
-        longitude: -96.82250976562501,
-        zoom: 16,
+        latitude: 33.074760,
+        longitude: -96.788420,
+        zoom: 13,
     });
 
     const maxMarkerNum = 100;
 
-    const locations = GetLocations("Testing Locations");
+    const locations = GetLocations(currentTerm, viewport.longitude, viewport.latitude);
 
     const mercatorViewport = new WebMercatorViewport(viewport);
     const bottomLeft = mercatorViewport.unproject([0, 0]);
@@ -38,8 +39,9 @@ export default function() {
     return (
         <Container>
             <ReactMapGL width="100vw" height="100vh" {...viewport}
-             onViewportChange={viewport => setViewport(viewport)}>
-                <Markers data={filteredLocations}/>
+             onViewportChange={viewport => setViewport(viewport)}
+             mapStyle="mapbox://styles/aephus/ckckyntll05jg1io32lfhe18d">
+                <Markers data={filteredLocations} extraInfoHandler={extraInfoHandler}/>
             </ReactMapGL>
         </Container>
     );
